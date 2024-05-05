@@ -17,7 +17,7 @@ import SessionState
 
 def main():
 
-    st.title("DetAll: All HealthCare Detection Tools at one place")
+    st.title("Health-Companion: All HealthCare Detection Tools at one place")
     st.write("------------------------------------------")
     st.sidebar.title("Command Bar")
     choices = ["Home","Eyes", "COVID", "Skin", "Medical Records"]
@@ -320,7 +320,7 @@ def main():
                         'Progress Notes': [progress_notes]
                     })
                         # Transpose the DataFrame
-                    info_df = info_df.transpose()
+                    #info_df = info_df.transpose()
                         # Display the DataFrame
                     st.write(info_df)
                 else:
