@@ -207,60 +207,26 @@ def main():
                 medical_info = {}
 
                 # Personal Information
-                medical_info['Date of Birth:'] = st.text_input('Date of Birth: ')
-                medical_info['Gender:'] = st.selectbox('Gender: ', ['Male', 'Female', 'Other'])
-                medical_info['Address:'] = st.text_input('Address: ')
-                medical_info['Contact Information:'] = st.text_input('Contact Information: ')
-
-                # Medical History
-                medical_info['Medical History'] = st.text_input('Medical History: ')
-                medical_info['Allergies'] = st.text_input('Allergies: ')
-                medical_info['Current Medications'] = st.text_input('Current Medications: ')
-                medical_info['Past Surgeries'] = st.text_input('Past Surgeries: ')
-                medical_info['Family History'] = st.text_input('Family History: ')
-
-                # Vital Signs
-                medical_info['Blood Pressure'] = st.text_input('Blood Pressure (e.g., 120/80)(Numeric value necessary)')
-                medical_info['Heart Rate'] = st.text_input('Heart Rate (beats per minute)(Numeric value necessary)')
-                medical_info['Respiratory Rate'] = st.text_input('Respiratory Rate (Numeric value necessary)')
-                medical_info['Temperature'] = st.text_input('Temperature (degrees Celsius) (Numeric value necessary)')
-                medical_info['Oxygen Saturation'] = st.text_input('Oxygen Saturation (%) (Numeric value necessary)')
-
-                # Laboratory Results
-                medical_info['Laboratory Results'] = st.text_input('Laboratory Results: ')
-
-                # Medication List
-                medical_info['Medication List'] = st.text_input('Medication List: ')
-
-                # Family Medical History
-                medical_info['Family Medical History'] = st.text_input('Family Medical History: ')
-
-                # Social History
-                medical_info['Social History'] = st.text_input('Social History: ')
-
-                # Medical Imaging Results
-                medical_info['Medical Imaging Results'] = st.text_input('Medical Imaging Results: ')
-
-                # Progress Notes
-                medical_info['Progress Notes'] = st.text_input('Progress Notes: ')
-
-                # Specialist Reports
-                medical_info['Specialist Reports'] = st.text_input('Specialist Reports: ')
-
-                # Emergency Contact Information
-                medical_info['Emergency Contact Information'] = st.text_input('Emergency Contact Information: ')
+                medical_info['Name'] = st.text_input('Name: ')
+                medical_info['Age'] = st.number_input('Age: ', min_value=0, max_value=120, step=1)
+                medical_info['Height'] = st.number_input('Height (in cm): ', min_value=0, max_value=250, step=1)
+                medical_info['Weight'] = st.number_input('Weight (in kg): ', min_value=0, max_value=200, step=1)
+                medical_info['Gender'] = st.selectbox('Gender: ', ['Male', 'Female', 'Other'])
+                medical_info['Blood Sugar Level'] = st.number_input('Blood Sugar Level: ', min_value=0.0, max_value=500.0, step=0.1)
+                medical_info['Blood Pressure'] = st.text_input('Blood Pressure (e.g., 120/80): ')
+                medical_info['Date of Visit'] = st.date_input('Date of Visit: ')
+                medical_info['Is Heart Patient'] = st.selectbox('Is Heart Patient: ', ['True', 'False'])
+                medical_info['Is Sugar Patient'] = st.selectbox('Is Sugar Patient: ', ['True', 'False'])
 
                 # Save Information Button
                 save_info = st.button("Save Information")
 
 
                 if save_info:  
-
                     new_data = {"Username": session_state.username, "Password": session_state.password}
                     new_data.update(medical_info)
                     row = list(new_data.values())
                     sheet.append_row(row)
-        
                     st.success("Information saved successfully!")
 
 
@@ -335,3 +301,5 @@ if __name__ == '__main__':
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
