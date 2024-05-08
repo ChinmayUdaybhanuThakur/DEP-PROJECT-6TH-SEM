@@ -169,39 +169,38 @@ def main():
 
     elif menu =="Medical Records":
         session_state = SessionState.get(username="", password="")
-        # Load the JSON file
-        import json
-        with open('/Users/chinmay/Documents/CHINMAY/DEP/Eyes-Diseases-Detctor-main/dep-6th-sem-iit-ropar-a98966aeae57.json') as json_file:
-            secrets = json.load(json_file)
 
-        # Extract the credentials
-        scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-        creds = Credentials.from_service_account_info(secrets, scopes=scope)
-                
-        st.sidebar.write("Enter your medical information or view your records.")
-        action = st.sidebar.radio("Choose an action: ", ["Enter Information", "View Records"])
+        session_state.username = st.text_input("Username", value="")
+        new_username = session_state.username
 
-        if action == "Enter Information":
-            client = gspread.authorize(creds)                
+        session_state.password = st.text_input("Password", type="password", value="")
+
+        if session_state.username == "admin" and session_state.password == "admin":
+
+            # Load the JSON file
+            import json
+            with open('/Users/chinmay/Documents/CHINMAY/DEP/Eyes-Diseases-Detctor-main/dep-6th-sem-iit-ropar-a98966aeae57.json') as json_file:
+                secrets = json.load(json_file)
+
+            # Extract the credentials
+            scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+            creds = Credentials.from_service_account_info(secrets, scopes=scope)
+
+            st.sidebar.write("Enter your medical information or view your records.")
+            action = st.sidebar.radio("Choose an action: ", ["Enter Information", "View Records"])
+
+            if action == "Enter Information":
+                # ... code to enter information ...
+
+                client = gspread.authorize(creds)                
                 # Open the Google Spreadsheet by its name (make sure you've shared it with the client email)                
-            sheet = client.open("Data").sheet1                
-                # Write data to the Google Spreadsheet   
+                sheet = client.open("Data").sheet1                
+                    # Write data to the Google Spreadsheet   
 
-            session_state.username = st.text_input("Username", value="")
-            new_username = session_state.username
-            client = gspread.authorize(creds)
-            sheet = client.open("Data").sheet1
-            records = sheet.get_all_records()
-            df = pd.DataFrame(records)
-
-            if new_username in df["Username"].values:
-                st.error("This username already exists. Please choose another username.")
-
-            else:
-
-                st.success("Unique Username detected, kindly continue")
-
-                session_state.password = st.text_input("Password", type="password", value="")
+                client = gspread.authorize(creds)
+                sheet = client.open("Data").sheet1
+                records = sheet.get_all_records()
+                df = pd.DataFrame(records)
 
                 # Medical Information Inputs
                 medical_info = {}
@@ -221,76 +220,28 @@ def main():
                 # Save Information Button
                 save_info = st.button("Save Information")
 
-
                 if save_info:  
-                    new_data = {"Username": session_state.username, "Password": session_state.password}
                     new_data.update(medical_info)
                     row = list(new_data.values())
                     sheet.append_row(row)
                     st.success("Information saved successfully!")
 
+            elif action == "View Records":
+                # Authorize and open the Google Spreadsheet
+                client = gspread.authorize(creds)
+                sheet = client.open("Data").sheet1
 
-        elif action == "View Records":
-            session_state.username = st.text_input("Username", value="")
-            session_state.password = st.text_input("Password", type="password", value="enter again")
-            view_records = st.button("View Records")
+                # Get all records from the sheet
+                records = sheet.get_all_records()
 
-            
-            new_username = session_state.username
-            client = gspread.authorize(creds)
-            sheet = client.open("Data").sheet1
-            records = sheet.get_all_records()
-            df = pd.DataFrame(records)
+                # Convert the records to a pandas DataFrame for easier manipulation
+                df = pd.DataFrame(records)
 
-            if view_records:
-                # Authorize using the credentials and open the Google Spreadsheet
-                
-                # Filter the DataFrame for the entered username and password
-                
-                user_data = df[(df["Username"] == session_state.username) & (df["Password"] == session_state.password)]
-                if not user_data.empty:
-                    
-                        # Access each column individually
-                    dob = user_data["Date of Birth"].values[0]
-                    gender = user_data["Gender"].values[0]
-                    address = user_data["Address"].values[0]
-                    contact_info = user_data["Contact Information"].values[0]
-                    medical_history = user_data["Medical History"].values[0]
-                    allergies = user_data["Allergies"].values[0]
-                    current_medications = user_data["Current Medications"].values[0]
-                    past_surgeries = user_data["Past Surgeries"].values[0]
-                    family_history = user_data["Family History"].values[0]
-                    social_history = user_data["Social History"].values[0]
-                    medical_imaging_results = user_data["Medical Imaging Results"].values[0]
-                    lab_results = user_data["Laboratory Results"].values[0]
-                    specialist_reports = user_data["Specialist Reports"].values[0]
-                    emergency_contact_info = user_data["Emergency Contact Information"].values[0]
-                    progress_notes = user_data["Progress Notes"].values[0]
+                # Display the DataFrame in the Streamlit app
+                st.dataframe(df)
 
-                        # Create a DataFrame for the information
-                    info_df = pd.DataFrame({
-                        'Date of Birth:': [dob],
-                        'Gender:': [gender],
-                        'Address:': [address],
-                        'Contact Information:': [contact_info],
-                        'Medical History': [medical_history],
-                        'Allergies': [allergies],
-                        'Current Medications': [current_medications],
-                        'Past Surgeries': [past_surgeries],
-                        'Family History': [family_history],
-                        'Social History': [social_history],
-                        'Medical Imaging Results': [medical_imaging_results],
-                        'Laboratory Results': [lab_results],
-                        'Specialist Reports': [specialist_reports],
-                        'Emergency Contact Information': [emergency_contact_info],
-                        'Progress Notes': [progress_notes]
-                    })
-                        # Transpose the DataFrame
-                    #info_df = info_df.transpose()
-                        # Display the DataFrame
-                    st.write(info_df)
-                else:
-                    st.error("No records found for this user.")
+        else:
+            st.error("Invalid username or password.")
 
 if __name__ == '__main__':
     main()
